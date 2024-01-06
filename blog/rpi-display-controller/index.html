@@ -1,0 +1,268 @@
+<!doctype html>
+<html>
+ <head>
+    <meta http-equiv='content-language' content='en-us'>
+  <meta name="author" content="Defective4">
+  <meta name="twitter:title" content="Controlling a LED segment display with a Raspberry Pi">
+  <meta name="description" content="Segment displays usually require special circuits to control. Of course, you can manually light up each of the display's segments, but it's hard to display any useful data that way.">
+  <meta name="twitter:description" content="Segment displays usually require special circuits to control. Of course, you can manually light up each of the display's segments, but it's hard to display any useful data that way.">
+  <meta name="keywords" content="raspberry,pi,led,display,controller,java,pi4j,gpio">
+  <meta name="theme-color" content="#a070a7">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <title>Controlling a LED segment display with a Raspberry Pi</title>
+  <script src="/js/bootstrap.bundle.js"></script>
+  <script src="/js/defective.js?rev=20240827"></script>
+  <script src="/js/moment.min.js"></script>
+  <link rel="stylesheet" href="/css/bootstrap.css">
+  <link rel="stylesheet" href="/css/all.min.css">
+  <link rel="stylesheet" href="/css/defective.css?rev=20240827">
+  <link rel="stylesheet" href="/css/labels.css?rev=20240827">
+  <link rel="stylesheet" href="/css/code.css">
+  <link rel="shortcut icon" href="/img/Defective.png" type="image/png">
+ </head>
+ <body>
+  <div class="container">
+   <button href="/blog" class="card-link" style="margin-top: 32px;"><i style="margin:0px;" class="fa fa-arrow-left"></i> Go back</button>
+   <h1 style="margin: 0px;">Controlling a LED segment display with a Raspberry Pi</h1><span id="post-time"><i class="fa fa-clock"></i></span>
+   <br>
+   <div class="post-container">
+    <p><img src="img/30mRaspiAmpLP.jpg" width="256/"><br>
+        <br>
+      Segment displays usually require special circuits to control. Of course, you can manually light up each of the display's segments, but it's hard to display any useful data that way.<br>
+      But what if we could control each segment using a computer?</p>
+    <h2 id="premise">Premise</h2>
+    <p>We'll use a Raspberry Pi's GPIO pins, which can conveniently output 3.3V and can be controlled however we want!<br>
+      For displays with a common cathode we can just wire each segment to its own GPIO pin, of course with resistors in series.</p><img src="/blog/rpi-display-controller/img/schem1.png" width="512">
+    <h2 id="the-common-anode-problem">The common anode problem</h2>
+    <p>There's a catch though. If you only have a common anode display, then you are in quite a situation.<br>
+      In common anode displays each segment is controlled by <strong>negative</strong> voltage, and the common pin is positive. That's a problem, because GPIO pins can only output positive voltage!<br>
+      My solution was to use one NPN transistor per segment. Each transistor's emitter can easily be grounded, and the collector wired through a resistor with a led segment. And then we can control the transistor by wiring its base through a resistor to a GPIO pin.<br>
+      It's not the prettiest solution, but it sure is easiest!<br>
+      So, let's remake our schematic for a common anode display:</p><img src="img/schem2.png" width="512"><br>
+      <br>
+    <p>This approach is actually way safer than the first one!<br>
+      Each transistor requires less than 1 mA of base current to saturate, guaranting that our Raspberry will never be overloaded.<br>
+      Raspberry's 3.3V rail (including GPIO pins) can only output less than <strong>50 mA</strong> simultaneously, and driving each LED segment directly from GPIO can take more than half of that limit!</p>
+    <h1 id="testing">Testing</h1>
+    <p>After assembling our circuit it's time to test it!<br>
+      To do so, we can use the <code>raspi-gpio</code> command included with the Raspberry OS.<br>
+      Assuming you are using tbe same pins as in schematics above (<code>17</code>, <code>18</code>, <code>22</code>, <code>23</code>, <code>24</code>, <code>25</code>, <code>27</code>), we first need to set all ports' function to output.<br>
+      We can do that with a simple bash command:</p>
+    <div class="sourceCode" id="cb1">
+     <pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> pin <span class="kw">in</span> 17 18 22 23 24 25 27<span class="kw">;</span> <span class="cf">do</span> <span class="ex">raspi-gpio</span> set <span class="va">$pin</span> op<span class="kw">;</span> <span class="cf">done</span></span></code></pre>
+    </div>
+    <p>Now we can test if all pins are wired correctly, by using</p>
+    <div class="sourceCode" id="cb2">
+     <pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">raspi-gpio</span> set <span class="op">&lt;</span>pin number<span class="op">&gt;</span> dh</span></code></pre>
+    </div>
+    <p>and then</p>
+    <div class="sourceCode" id="cb3">
+     <pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">raspi-gpio</span> set <span class="op">&lt;</span>pin number<span class="op">&gt;</span> dl</span></code></pre>
+    </div>
+    <p>If respective pins light up, then everything works!<br>
+      Now on to the next part...</p>
+    <h2 id="programming">Programming</h2>
+    <p>I will use a Java library called <a href="https://www.pi4j.com/">pi4j</a> to interact with Raspberry's outputs.<br>
+      You can also skip this part and see <a href="https://github.com/Defective4/rpi-display-controller">my repository</a> dedicated to this project.</p>
+    <p>This section assumes you know how to setup a Java Maven projects with pi4j library. Of course basic Java knowledge is also required.<br>
+      After setting up a project, we will create a class, that will be our interface to the display:</p>
+    <div class="sourceCode" id="cb4">
+     <pre class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">com</span><span class="op">.</span><span class="im">pi4j</span><span class="op">.</span><span class="im">context</span><span class="op">.</span><span class="im">Context</span><span class="op">;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">com</span><span class="op">.</span><span class="im">pi4j</span><span class="op">.</span><span class="im">io</span><span class="op">.</span><span class="im">gpio</span><span class="op">.</span><span class="im">digital</span><span class="op">.</span><span class="im">DigitalOutput</span><span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> DisplayController <span class="op">{</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> DigitalOutput<span class="op">[]</span> leds<span class="op">;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="fu">DisplayController</span><span class="op">(</span><span class="bu">Context</span> pi4j<span class="op">,</span> <span class="dt">int</span><span class="op">[]</span> pins<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>pins<span class="op">.</span><span class="fu">length</span> <span class="op">!=</span> <span class="dv">7</span><span class="op">)</span> <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">IllegalArgumentException</span><span class="op">(</span><span class="st">"pins != 7"</span><span class="op">);</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        leds <span class="op">=</span> <span class="kw">new</span> DigitalOutput<span class="op">[</span>pins<span class="op">.</span><span class="fu">length</span><span class="op">];</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> x <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> x <span class="op">&lt;</span> pins<span class="op">.</span><span class="fu">length</span><span class="op">;</span> x<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>            leds<span class="op">[</span>x<span class="op">]</span> <span class="op">=</span> pi4j<span class="op">.</span><span class="fu">digitalOutput</span><span class="op">().</span><span class="fu">create</span><span class="op">(</span>pins<span class="op">[</span>x<span class="op">]);</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre>
+    </div>
+    <p>As you can see, it takes a pi4j <code>Context</code> instance as its argument, and a <code>int</code> array.<br>
+      The passed integer array should contain addresses of all our 7 GPIO pins, each corresponding to a display segment.<br>
+      For the sake of this post, let's assume the order of pins is as follows: <code>A</code>, <code>F</code>, <code>B</code>, <code>G</code>, <code>E</code>, <code>C</code>, <code>D</code>.<br>
+      See schematics above for reference.<br>
+      Now we need to map all possible digits to segments they require to be fully displayed.<br>
+      We will create a <code>DisplayCharacter</code> enum:</p>
+    <div class="sourceCode" id="cb5">
+     <pre class="sourceCode java"><code class="sourceCode java"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">enum</span> DisplayCharacter <span class="op">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> <span class="dt">int</span><span class="op">[]</span> segments<span class="op">;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> <span class="dt">char</span> character<span class="op">;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="fu">DisplayCharacter</span><span class="op">(</span><span class="dt">char</span> c<span class="op">,</span> <span class="dt">int</span><span class="kw">...</span> segments<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        character <span class="op">=</span> c<span class="op">;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="fu">segments</span> <span class="op">=</span> segments<span class="op">;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">int</span><span class="op">[]</span> <span class="fu">getSegments</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> segments<span class="op">;</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre>
+    </div>
+    <p>The enum will hold all characters along with their segment indexes.<br>
+      Now let's add our characters:</p>
+    <div class="sourceCode" id="cb6">
+     <pre class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">enum</span> DisplayCharacter <span class="op">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ONE</span><span class="op">(</span><span class="ch">'1'</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">5</span><span class="op">),</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">TWO</span><span class="op">(</span><span class="ch">'2'</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">6</span><span class="op">),</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">THREE</span><span class="op">(</span><span class="ch">'3'</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">6</span><span class="op">),</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">FOUR</span><span class="op">(</span><span class="ch">'4'</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">5</span><span class="op">),</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">FIVE</span><span class="op">(</span><span class="ch">'5'</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">6</span><span class="op">),</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">SIX</span><span class="op">(</span><span class="ch">'6'</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">6</span><span class="op">),</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">SEVEN</span><span class="op">(</span><span class="ch">'7'</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">5</span><span class="op">),</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">EIGHT</span><span class="op">(</span><span class="ch">'8'</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">6</span><span class="op">),</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">NINE</span><span class="op">(</span><span class="ch">'9'</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">6</span><span class="op">),</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ZERO</span><span class="op">(</span><span class="ch">'0'</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">6</span><span class="op">);</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> <span class="dt">int</span><span class="op">[]</span> segments<span class="op">;</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> <span class="dt">char</span> character<span class="op">;</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="fu">DisplayCharacter</span><span class="op">(</span><span class="dt">char</span> c<span class="op">,</span> <span class="dt">int</span><span class="kw">...</span> segments<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        character <span class="op">=</span> c<span class="op">;</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="fu">segments</span> <span class="op">=</span> segments<span class="op">;</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">int</span><span class="op">[]</span> <span class="fu">getSegments</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> segments<span class="op">;</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre>
+    </div>
+    <p>The <code>ONE</code> digit needs segments <code>2</code> and <code>5</code> to light, <code>TWO</code> needs <code>0</code>, <code>2</code>, <code>3</code>, <code>4</code>, <code>6</code>, and so on...<br>
+      Now we need some convenience methods:</p>
+    <div class="sourceCode" id="cb7">
+     <pre class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">enum</span> DisplayCharacter <span class="op">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ONE</span><span class="op">(</span><span class="ch">'1'</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">5</span><span class="op">),</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">TWO</span><span class="op">(</span><span class="ch">'2'</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">6</span><span class="op">),</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">THREE</span><span class="op">(</span><span class="ch">'3'</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">6</span><span class="op">),</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">FOUR</span><span class="op">(</span><span class="ch">'4'</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">5</span><span class="op">),</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">FIVE</span><span class="op">(</span><span class="ch">'5'</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">6</span><span class="op">),</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">SIX</span><span class="op">(</span><span class="ch">'6'</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">6</span><span class="op">),</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">SEVEN</span><span class="op">(</span><span class="ch">'7'</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">5</span><span class="op">),</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">EIGHT</span><span class="op">(</span><span class="ch">'8'</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">6</span><span class="op">),</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">NINE</span><span class="op">(</span><span class="ch">'9'</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">6</span><span class="op">),</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ZERO</span><span class="op">(</span><span class="ch">'0'</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">6</span><span class="op">);</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> <span class="dt">int</span><span class="op">[]</span> segments<span class="op">;</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> <span class="dt">char</span> character<span class="op">;</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="fu">DisplayCharacter</span><span class="op">(</span><span class="dt">char</span> c<span class="op">,</span> <span class="dt">int</span><span class="kw">...</span> segments<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        character <span class="op">=</span> c<span class="op">;</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="fu">segments</span> <span class="op">=</span> segments<span class="op">;</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">int</span><span class="op">[]</span> <span class="fu">getSegments</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> segments<span class="op">;</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> DisplayCharacter <span class="fu">getForDigit</span><span class="op">(</span><span class="dt">int</span> i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>i <span class="op">&lt;</span> <span class="dv">0</span> <span class="op">||</span> i <span class="op">&gt;</span> <span class="dv">9</span><span class="op">)</span> <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">IllegalArgumentException</span><span class="op">(</span><span class="st">"Only single digits are supported"</span><span class="op">);</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fu">getForCharacter</span><span class="op">((</span><span class="dt">char</span><span class="op">)</span> <span class="op">(</span>i <span class="op">+</span> <span class="dv">48</span><span class="op">));</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> DisplayCharacter <span class="fu">getForCharacter</span><span class="op">(</span><span class="dt">char</span> c<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span>DisplayCharacter dc <span class="op">:</span> <span class="fu">values</span><span class="op">())</span> <span class="cf">if</span> <span class="op">(</span>dc<span class="op">.</span><span class="fu">c2</span> <span class="op">==</span> c<span class="op">)</span> <span class="cf">return</span> dc<span class="op">;</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="kw">null</span><span class="op">;</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">boolean</span> <span class="fu">isValidCharacter</span><span class="op">(</span><span class="dt">char</span> c<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fu">getForCharacter</span><span class="op">(</span>c<span class="op">)</span> <span class="op">!=</span> <span class="kw">null</span><span class="op">;</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre>
+    </div>
+    <p>...and our enum is ready to use!<br>
+      Back to our <code>DisplayController</code>, we now need to add some methods to actually display the characters.<br>
+      First we need a <code>clear</code> method, to turn off all outputs and cause the display to go blank (if it isn't already). It will also help us change displayed characters, clearing the display between changes.</p>
+    <div class="sourceCode" id="cb8">
+     <pre class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">com</span><span class="op">.</span><span class="im">pi4j</span><span class="op">.</span><span class="im">context</span><span class="op">.</span><span class="im">Context</span><span class="op">;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">com</span><span class="op">.</span><span class="im">pi4j</span><span class="op">.</span><span class="im">io</span><span class="op">.</span><span class="im">gpio</span><span class="op">.</span><span class="im">digital</span><span class="op">.</span><span class="im">DigitalOutput</span><span class="op">;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> DisplayController <span class="op">{</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> DigitalOutput<span class="op">[]</span> leds<span class="op">;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="fu">DisplayController</span><span class="op">(</span><span class="bu">Context</span> pi4j<span class="op">,</span> <span class="dt">int</span><span class="op">[]</span> pins<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>pins<span class="op">.</span><span class="fu">length</span> <span class="op">!=</span> <span class="dv">7</span><span class="op">)</span> <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">IllegalArgumentException</span><span class="op">(</span><span class="st">"pins != 7"</span><span class="op">);</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        leds <span class="op">=</span> <span class="kw">new</span> DigitalOutput<span class="op">[</span>pins<span class="op">.</span><span class="fu">length</span><span class="op">];</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> x <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> x <span class="op">&lt;</span> pins<span class="op">.</span><span class="fu">length</span><span class="op">;</span> x<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>            leds<span class="op">[</span>x<span class="op">]</span> <span class="op">=</span> pi4j<span class="op">.</span><span class="fu">digitalOutput</span><span class="op">().</span><span class="fu">create</span><span class="op">(</span>pins<span class="op">[</span>x<span class="op">]);</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">clear</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span>DigitalOutput led <span class="op">:</span> leds<span class="op">)</span> led<span class="op">.</span><span class="fu">setState</span><span class="op">(</span><span class="kw">false</span><span class="op">);</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre>
+    </div>
+    <p>Here is our controller class with <code>clear</code> method added.<br>
+      It loops through all available outputs, and sets them all to <code>LOW</code> state.<br>
+      Our next method, <code>displayCharacter</code>, is quite similar.<br>
+      It will loop through all outputs, and light the ones, that match with the provided <code>DisplayCharacter</code>!</p>
+    <div class="sourceCode" id="cb9">
+     <pre class="sourceCode java"><code class="sourceCode java"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">com</span><span class="op">.</span><span class="im">pi4j</span><span class="op">.</span><span class="im">context</span><span class="op">.</span><span class="im">Context</span><span class="op">;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">com</span><span class="op">.</span><span class="im">pi4j</span><span class="op">.</span><span class="im">io</span><span class="op">.</span><span class="im">gpio</span><span class="op">.</span><span class="im">digital</span><span class="op">.</span><span class="im">DigitalOutput</span><span class="op">;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> DisplayController <span class="op">{</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> DigitalOutput<span class="op">[]</span> leds<span class="op">;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="fu">DisplayController</span><span class="op">(</span><span class="bu">Context</span> pi4j<span class="op">,</span> <span class="dt">int</span><span class="op">[]</span> pins<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>pins<span class="op">.</span><span class="fu">length</span> <span class="op">!=</span> <span class="dv">7</span><span class="op">)</span> <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">IllegalArgumentException</span><span class="op">(</span><span class="st">"pins != 7"</span><span class="op">);</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        leds <span class="op">=</span> <span class="kw">new</span> DigitalOutput<span class="op">[</span>pins<span class="op">.</span><span class="fu">length</span><span class="op">];</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> x <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> x <span class="op">&lt;</span> pins<span class="op">.</span><span class="fu">length</span><span class="op">;</span> x<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>            leds<span class="op">[</span>x<span class="op">]</span> <span class="op">=</span> pi4j<span class="op">.</span><span class="fu">digitalOutput</span><span class="op">().</span><span class="fu">create</span><span class="op">(</span>pins<span class="op">[</span>x<span class="op">]);</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">clear</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span>DigitalOutput led <span class="op">:</span> leds<span class="op">)</span> led<span class="op">.</span><span class="fu">setState</span><span class="op">(</span><span class="kw">false</span><span class="op">);</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">displayCharacter</span><span class="op">(</span>DisplayCharacter character<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>        <span class="fu">clear</span><span class="op">();</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> l <span class="op">:</span> character<span class="op">.</span><span class="fu">getSegments</span><span class="op">())</span> leds<span class="op">[</span>l<span class="op">].</span><span class="fu">setState</span><span class="op">(</span><span class="kw">true</span><span class="op">);</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre>
+    </div>
+    <p>And here is our complete class.<br>
+      Now to use it:</p>
+    <div class="sourceCode" id="cb10">
+     <pre class="sourceCode java"><code class="sourceCode java"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">com</span><span class="op">.</span><span class="im">pi4j</span><span class="op">.</span><span class="im">Pi4J</span><span class="op">;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">com</span><span class="op">.</span><span class="im">pi4j</span><span class="op">.</span><span class="im">context</span><span class="op">.</span><span class="im">Context</span><span class="op">;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> DisplayMain <span class="op">{</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Context</span> pi4j <span class="op">=</span> Pi4J<span class="op">.</span><span class="fu">newAutoContext</span><span class="op">();</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span><span class="op">[]</span> pins <span class="op">=</span> <span class="op">{</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>                <span class="dv">18</span><span class="op">,</span> <span class="dv">27</span><span class="op">,</span> <span class="dv">25</span><span class="op">,</span> <span class="dv">24</span><span class="op">,</span> <span class="dv">23</span><span class="op">,</span> <span class="dv">22</span><span class="op">,</span> <span class="dv">17</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        <span class="op">};</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        DisplayController display <span class="op">=</span> <span class="kw">new</span> <span class="fu">DisplayController</span><span class="op">(</span>pi4j<span class="op">,</span> pins<span class="op">);</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        display<span class="op">.</span><span class="fu">displayCharacter</span><span class="op">(</span>DisplayCharacter<span class="op">.</span><span class="fu">getForDigit</span><span class="op">(</span><span class="dv">4</span><span class="op">));</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre>
+    </div>
+    <p>After compiling and exporting the code, you can run it.<br>
+      Remember that you need to use <code>sudo</code>, otherwise the library won't be able to use GPIO!<br>
+      If all is done correctly, you will now see a <code>4</code> displayed on your display.<br>
+      Congratulations!<br>
+      You have just built a single 7-segment display controller!</p>
+    <p><img src="img/board.jpg" alt="board"></p>
+   </div>
+  </div>
+  <script src="/js/ripple.js"></script>
+  <script>
+        const time = "1724779635";
+        const postTime = document.getElementById("post-time");
+        postTime.innerHTML = postTime.innerHTML + moment.unix(time).format("ddd, Do MMM YYYY [at] HH:mm");
+    </script>
+ </body>
+</html>

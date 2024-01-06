@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+    <meta http-equiv='content-language' content='en-us'>
+        <title>Defective's Blog - A blog about random things</title>
+        <meta name="author" content="Defective4" />
+        <meta name="twitter:title" content="Defective's Blog" />
+        <meta name="description" content="A blog about random things from an amateur's perspective" />
+        <meta name="twitter:description" content="A blog about random things from an amateur's perspective" />
+        <meta name="twitter:image"
+            content="https://cdn.discordapp.com/avatars/1014466568484294656/8b5e52057d59ae0c62cf91e321dd4b16.png?size=1024&format=png&width=0&height=256" />
+        <meta name="keywords"
+            content="defective, java, developer, commissions, plugins, minecraft, spigot, paper, bukkit, blog, sdr, radio, ham, amateur, programming, development" />
+        <meta name="theme-color" content="#a070a7" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta charset="UTF-8" />
+        <script src="/js/bootstrap.bundle.js"></script>
+        <script src="/js/defective.js?rev=20240827"></script>
+        <script src="/js/moment.min.js"></script>
+        <link rel="stylesheet" href="/css/bootstrap.css">
+        <link rel="stylesheet" href="/css/all.min.css">
+        <link rel="stylesheet" href="/css/defective.css?rev=20240827">
+        <link rel="stylesheet" href="/css/labels.css?rev=20240827">
+        <link rel="shortcut icon" href="/img/Defective.png" type="image/png">
+    </head>
+
+    <body>
+        <!-- MODALS -->
+
+        <div class="modal fade" id="newsletterModal" tabindex="-1" style="font-weight: 400;" data-bs-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content bg-dark">
+                    <div class="modal-header" style="font-size: 0.95rem; font-weight: bold;">
+                        Would you like to receive notifications on your Discord channel?
+                    </div>
+                    <div class="modal-body" style="font-size: 0.85rem;text-align: left;">
+                        Enter your Discord Webhook URL. I will send you notifications there!<br>
+                        <input type="text" id="hooktext" class="text-in" /><br>
+                        <span id="hooklabel" style="color: rgb(255, 52, 52); display: none;">Invalid
+                            webhook address</span><br>
+                        <a id="sendhook" type="submit" style="font-size: 0.75rem;" class="button github"><i
+                                class="fa fa-envelope"></i>Send</a><br>
+                        <a href="/blog/privacy/">Privacy</a><br><br>
+                        --- or --- <br><br>
+                        <a href="https://discord.gg/sP98bwTESz" target="_blank" class="button discord-filled"><i class="fab fa-discord"></i>Join my Discord server</a>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="button github" data-bs-dismiss="modal"><i class="fa fa-close"></i>Close</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <a href="/" class="button github" style="margin-top: 32px; font-size: 0.75rem;"><i class="fa fa-home"></i>
+                Main
+                page</a><br>
+            <button data-bs-toggle="modal" data-bs-target="#newsletterModal" class="card-link"
+                style="margin-bottom: 24px; margin-left: 0px;"><i class="fa fa-envelope"></i>Subscribe
+                to
+                Newsletter</button>
+            <h1 style="margin: 0px;">Defective's Blog</h1>
+            Random stuff in one place
+
+            <h2 style="margin-bottom: 0px;">Recent posts <a class="button github"><i class="fa fa-refresh"
+                        onclick="window.location.reload();" style="margin: 0px; font-size: 14px;"></i></a></h2>
+            <div class="cards" id="cards">
+                <div class="card placeholder-glow" style="max-width: 50%; min-width: 400px; cursor: wait;">
+                    <div class="card-body">
+                        <h5 class="card-title"><span class="placeholder col-10"></span></h5>
+                        <p><span class="placeholder col-2"></span></p>
+                        <p class="card-text placeholder-glow">
+
+                            <span class="placeholder col-7"></span>
+                            <span class="placeholder col-4"></span>
+                            <span class="placeholder col-4"></span>
+                            <span class="placeholder col-6"></span>
+                            <span class="placeholder col-8"></span>
+                        </p>
+                        <span class="placeholder col-2"></span>
+                    </div>
+                </div>
+            </div>
+            <script src="/blog/js/loader.js?rev=20240827"></script>
+            <script>
+                const hookURL = "https://blog.racuszki.pl/submit";
+                let sendhook = document.getElementById("sendhook");
+                sendhook.onclick = function () {
+                    let url = document.getElementById("hooktext").value;
+                    let hooklabel = document.getElementById("hooklabel");
+                    if (url.length > 0 && url.startsWith("https://discord.com/api/webhooks/")) {
+                        let xhr = new XMLHttpRequest();
+                        xhr.onreadystatechange = () => {
+                            sendhook.classList.add("disabled");
+                            if (xhr.readyState == XMLHttpRequest.DONE) {
+                                let status = xhr.status;
+                                if (status == 200) {
+                                    hooklabel.style.display = "inline-block";
+                                    hooklabel.innerHTML = xhr.responseText;
+                                    hooklabel.style.color = "#00ff00";
+                                } else {
+                                    hooklabel.style.display = "inline-block";
+                                    hooklabel.innerHTML = xhr.responseText;
+                                    sendhook.classList.remove("disabled");
+                                }
+                            }
+                        };
+                        xhr.onerror = () => {
+                            hooklabel.style.display = "inline-block";
+                            hooklabel.innerHTML = "There was an error sending request!";
+                            sendhook.classList.remove("disabled");
+                        };
+                        xhr.open("POST", hookURL);
+                        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                        xhr.send("url=" + encodeURI(url));
+                        return;
+                    }
+                    hooklabel.style.display = "inline-block";
+                };
+
+            </script>
+            <script src="/js/autoadapt.js"></script>
+        </div>
+
+        <script src="/js/ripple.js"></script>
+    </body>
+
+</html>

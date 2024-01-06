@@ -1,6 +1,14 @@
+.badge {
+    font-size: 0.5rem;
+}
+
 .label {
     padding: 2px 5px;
     border-radius: 5px;
+}
+
+.label i {
+    font-size: 0.75rem !important;
 }
 
 .labels {

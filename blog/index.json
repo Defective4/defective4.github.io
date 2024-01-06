@@ -1,0 +1,22 @@
+{
+  "posts": [
+    {
+      "title": "Controlling a LED segment display with a Raspberry Pi",
+      "time": "1724779635",
+      "desc": [
+        "Segment displays usually require special circuits to control. Of course, you can manually light up each of the display\u0027s segments, but it\u0027s hard to display any useful data that way. ",
+        " But what if we could control each segment using a computer?"
+      ],
+      "link": "/blog/rpi-display-controller"
+    },
+    {
+      "title": "The first post",
+      "time": "1724703918",
+      "desc": [
+        "Hi! This is the first post on my blog. ",
+        " It\u0027s more of a markdown test, than a regular post. "
+      ],
+      "link": "/blog/helloworld"
+    }
+  ]
+}

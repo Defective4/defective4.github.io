@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <meta http-equiv='content-language' content='en-us'>
     <meta name="author" content="Defective4" />
     <meta name="twitter:title" content="Defective's Website" />
     <meta name="description" content="Hi! I'm Defective, a Java/Minecraft developer." />
@@ -9,36 +10,41 @@
     <meta name="twitter:image"
         content="https://cdn.discordapp.com/avatars/1014466568484294656/8b5e52057d59ae0c62cf91e321dd4b16.png?size=1024&format=png&width=0&height=256" />
     <meta name="keywords"
-        content="defective, java, developer, commissions, plugins, minecraft, spigot, paper, bukkit" />
+        content="defective, java, developer, commissions, plugins, minecraft, spigot, paper, bukkit, blog, sdr, radio, ham, amateur, programming, development" />
     <meta name="theme-color" content="#a070a7" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta charset="UTF-8" />
-    <title>Defective</title>
+    <title>Defective's Website - A developer's blog</title>
     <script src="js/bootstrap.bundle.js"></script>
-    <script src="js/defective.js"></script>
+    <script src="js/defective.js?rev=20240827"></script>
     <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/all.min.css">
-    <link rel="stylesheet" href="css/defective.css">
-    <link rel="stylesheet" href="css/labels.css">
+    <link rel="stylesheet" href="css/defective.css?rev=20240827">
+    <link rel="stylesheet" href="css/labels.css?rev=20240827">
+    <link rel="shortcut icon" href="/img/Defective.png" type="image/png">
 </head>
 
 <body>
-    <div class="console">
-
-    </div>
-    <div class="header">
+    <div class="console"></div>
+    <div class="headerText">
         <h2 style="margin:0px; display: inline-block; color:white;">Hello...</h2><br>
         <h1 style="margin:0px 0px 15px 0px; display: inline-block"><noscript>I am Defective</noscript><span
                 id="hTitle"></span><span class="blinker">_</span></h1><br>
         <div class="headerContent" style="margin-bottom: 30px;">
-            <span style="color: #c060c0; font-weight: 600;">A Java developer that specializes in Spigot plugins and
+            <span style="color: #c060c0; font-weight: 600;">A Java developer specializing in Spigot plugins and
                 Minecraft protocol.</span>
         </div>
         <div class="headerContent2">
             <a class="button github" href="https://github.com/Defective4"><i class="fab fa-github"></i>GitHub</a>
             <a class="button about" href="#about"><i class="fa fa-arrow-circle-down"></i>About me</a>
-            <a class="button contact" href="#contact"><i class="fa fa-contact-card"></i>Contact</a>
+            <a class="button contact" href="#contact"><i class="fa fa-contact-card"></i>Contact</a><br>
+            <a class="button golden shiny" href="blog">
+                <span class="star" style="top: -8px; left: -8px; animation-delay: 1s"></span>
+                <span class="star" style="top: 0%; left: 65%; animation-delay: 1.5s"></span>
+                <span class="star" style="top: 90%; left: 40%; animation-delay: .75s"></span>
+                <span class="star" style="top: 75%; left: 90%; animation-delay: 2.15s"></span>
+                <i class="fa fa-blog"></i>My blog <span class="badge">NEW!</span></a>
         </div>
         <div style="animation: appear 1s 2.1s forwards; opacity: 0; font-weight: bold;" class="gradTitle">
             I'm open for commissions!<br>
@@ -48,10 +54,10 @@
 
     <div class="scontainer">
         <h1 id="about">About me</h1>
-        <div style="color: white; font-weight: 600;">
+        <div style="color: white">
             <p class="code">
                 <span style="color: #52cc3d;">defective@localhost</span>:~/WWW$ ./aboutme.sh<br><br>
-                <span class="gradTitle" style="font-size: 1rem;">I write <span
+                <span class="gradTitle" style="font-size: 1rem; font-weight: 600;">I write <span
                         id="words">configurations</span></span><span class="blinker">_</span><br><br>
                 <span id="console-aboutme">
                     I'm a 21 years old Java developer that enjoys writing random stuff.<br>
@@ -68,15 +74,295 @@
                 animTitle();
             </script>
             <h2>Skills</h2>
-            <p class="cite">This section is "work in progress"</p>
+            <blockquote style="width: fit-content">This section is "work in progress"</blockquote>
             <div style="font-weight: normal;">
                 <ul class="marginal" id="console-skills">
                     <li>Writing Spigot plugins tailored to user's expectations and optimized for best performance.</li>
                     <li>4+ years of experience with Java</li>
+                    <li>Ability to use Java libs and frameworks, including <a href="https://javalin.io">Javalin</a>, <a
+                            href="https://spring.io/projects/spring-framework">Spring</a> (basics) and <a
+                            href="https://www.thymeleaf.org/">Thymeleaf</a>
                     <li>Ability to work with other languages, such as Kotlin, PHP, HTML, CSS and basic JavaScript</li>
                     <li>Making Minecraft bots completely from scratch</li>
+                    <li>Adapting and coming up with unconventional solutions to almost any problem</li>
+                    <li>Writing Fabric mods</li>
                 </ul>
             </div>
+
+            <h2 style="margin: 0px;">Technologies and Tools</h2>
+            <div style="font-weight: normal;">
+                <table class="noborder">
+                    <thead>
+                        <tr>
+                            <th>
+                                <h4 style="margin: 0px; text-align: center;">Languages</h4>
+                            </th>
+                            <th>
+                                <h4 style="margin: 0px; text-align: center;">Frameworks</h4>
+                            </th>
+                            <th>
+                                <h4 style="margin: 0px; text-align: center;">Tools</h4>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <table class="noborder">
+                                    <tr>
+                                        <td>Java</td>
+                                        <td> - <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star-half-stroke"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td>HTML</td>
+                                        <td> - <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-regular fa-star-half-stroke"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td>CSS</td>
+                                        <td> - <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-regular fa-star"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td>PHP</td>
+                                        <td> - <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-regular fa-star"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td>SQL</td>
+                                        <td> - <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star-half-stroke"></i><i
+                                                class="fa-regular fa-star"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Kotlin</td>
+                                        <td> - <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star-half-stroke"></i><i
+                                                class="fa-regular fa-star"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td>JavaScript</td>
+                                        <td> - <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i
+                                                class="fa-regular fa-star"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td>TypeScript</td>
+                                        <td> - <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i
+                                                class="fa-regular fa-star"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td>C#</td>
+                                        <td> - <i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i><i
+                                                class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i
+                                                class="fa-regular fa-star"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td>C</td>
+                                        <td> - <i class="fa-solid fa-star-half-stroke"></i><i
+                                                class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i
+                                                class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td>
+                                <table class="noborder">
+                                    <tr>
+                                        <td><a href="https://javalin.io/" target="_blank">Javalin</a></td>
+                                        <td> - <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-regular fa-star"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="https://github.com/discord-jda/JDA" target="_blank">JDA</a></td>
+                                        <td> - <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-regular fa-star"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="https://getbootstrap.com/" target="_blank">Bootstrap</a></td>
+                                        <td> - <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star-half-stroke"></i><i
+                                                class="fa-regular fa-star"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="https://spring.io/" target="_blank">Spring</a></td>
+                                        <td> - <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i
+                                                class="fa-regular fa-star"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td><br></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="https://papermc.io/" target="_blank">Paper</a></td>
+                                        <td> - <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-regular fa-star"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="https://fabricmc.net/" target="_blank">Fabric</a></td>
+                                        <td> - <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star-half-stroke"></i><i
+                                                class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td><br></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td><br></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td><br></td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td>
+                                <table class="noborder">
+                                    <tr>
+                                        <td>Git</td>
+                                        <td> - <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-solid"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star"></i><i class="fa-regular fa-star-half-stroke"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Bash</td>
+                                        <td> - <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-solid"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td><br></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td><br></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td><br></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td><br></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td><br></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td><br></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td><br></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td><br></td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- MODALS -->
+
+            <div class="modal fade" id="minesSSHModal" tabindex="-1" style="font-weight: 400;">
+                <div class="modal-dialog">
+                    <div class="modal-content bg-dark">
+                        <div class="modal-header" style="font-size: 0.95rem; font-weight: bold;">
+                            SSH TUI-Mines credentials
+                        </div>
+                        <div class="modal-body" style="font-size: 0.85rem;text-align: left;">
+                            Use these credentials in your favourite SSH client:<br>
+                            (Tested with <a href="https://www.putty.org/" target="_blank">PuTTY</a>)<br><br>
+                            <div class="code" style="text-align: left;">
+                                Server: 65.21.130.122<br>
+                                Port: 11227<br>
+                                User: mines<br>
+                                Password is empty
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <a class="button github" data-bs-dismiss="modal"><i class="fa fa-close"></i>Close</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="minesModal" tabindex="-1" style="font-weight: 400;">
+                <div class="modal-dialog">
+                    <div class="modal-content bg-dark">
+                        <div class="modal-header" style="font-size: 0.95rem; font-weight: bold;">
+                            TUI-Mines
+                        </div>
+                        <div class="modal-body" style="font-size: 0.85rem;">
+                            TUI-Mines is the winning project of a Coding Jam hosted<br>
+                            at <a href="https://discord.com/invite/X3NmMgzFKF" target="_blank">Java
+                                Community
+                                Discord</a>.<br>
+                            <br>
+                            The exact announcement message with winners can be found<br>
+                            here: <a
+                                href="https://discord.com/channels/648956210850299986/653619894772039680/1169643030475714670"
+                                class="discordLink" target="_blank"><svg role="img" xmlns="http://www.w3.org/2000/svg"
+                                    width="16" height="16" fill="none" viewBox="0 0 24 24">
+                                    <path fill="currentColor" fill-rule="evenodd"
+                                        d="M10.99 3.16A1 1 0 1 0 9 2.84L8.15 8H4a1 1 0 0 0 0 2h3.82l-.67 4H3a1 1 0 1 0 0 2h3.82l-.8 4.84a1 1 0 0 0 1.97.32L8.85 16h4.97l-.8 4.84a1 1 0 0 0 1.97.32l.86-5.16H20a1 1 0 1 0 0-2h-3.82l.67-4H21a1 1 0 1 0 0-2h-3.82l.8-4.84a1 1 0 1 0-1.97-.32L15.15 8h-4.97l.8-4.84ZM14.15 14l.67-4H9.85l-.67 4h4.97Z"
+                                        clip-rule="evenodd" class=""></path>
+                                </svg>announcements
+                            </a>
+                        </div>
+                        <div class="modal-footer">
+                            <a class="button github" data-bs-dismiss="modal"><i class="fa fa-close"></i>Close</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="sshModal" tabindex="-1" style="font-weight: 400;">
+                <div class="modal-dialog">
+                    <div class="modal-content bg-dark">
+                        <div class="modal-header" style="font-size: 0.95rem; font-weight: bold;">
+                            SSH login credentials
+                        </div>
+                        <div class="modal-body" style="font-size: 0.85rem;text-align: left;">
+                            Use these credentials in your favourite SSH client:<br>
+                            (Tested with <a href="https://www.putty.org/" target="_blank">PuTTY</a>)
+                            <br><br>
+                            <div class="code" style="text-align: left;">
+                                Server: 65.21.130.122<br>
+                                Port: 11227<br>
+                                User: visitor<br>
+                                Password is empty
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <a class="button github" data-bs-dismiss="modal"><i class="fa fa-close"></i>Close</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- END OF MODALS -->
 
             <h2 style="display: inline-block;">My projects</h2> <a class="button github"
                 href="https://github.com/Defective4"><i class="fab fa-github" style="margin: 0px"></i></a><br>
@@ -98,6 +384,10 @@
                         aria-label="Slide 6"></button>
                     <button type="button" data-bs-target="#showcaseCarousel" data-bs-slide-to="6" aria-current="true"
                         aria-label="Slide 7"></button>
+                    <button type="button" data-bs-target="#showcaseCarousel" data-bs-slide-to="7" aria-current="true"
+                        aria-label="Slide 8"></button>
+                    <button type="button" data-bs-target="#showcaseCarousel" data-bs-slide-to="8" aria-current="true"
+                        aria-label="Slide 9"></button>
                 </div>
                 <div class="carousel-inner">
                     <div class="carousel-item active">
@@ -110,80 +400,17 @@
                             </div>
                             <h5 class="carousel-title">TUI-Mines</h5>
                             <div class="d-none d-md-block console-c-content">
-
-                                <div class="modal fade" id="minesSSHModal" tabindex="-1" style="font-weight: 400;">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content bg-dark">
-                                            <div class="modal-header" style="font-size: 0.95rem; font-weight: bold;">
-                                                SSH TUI-Mines credentials
-                                            </div>
-                                            <div class="modal-body" style="font-size: 0.85rem;">
-                                                <p style="text-align: left;">
-                                                    Use these credentials in your favourite SSH client:<br>
-                                                    (Tested with <a href="https://www.putty.org/"
-                                                        target="_blank">PuTTY</a>)
-                                                <div class="code" style="text-align: left;">
-                                                    Server: 65.21.130.122<br>
-                                                    Port: 11227<br>
-                                                    User: mines<br>
-                                                    Password is empty
-                                                </div>
-                                                </p>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <a class="button github" data-bs-dismiss="modal"><i
-                                                        class="fa fa-close"></i>Close</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal fade" id="minesModal" tabindex="-1" style="font-weight: 400;">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content bg-dark">
-                                            <div class="modal-header" style="font-size: 0.95rem; font-weight: bold;">
-                                                TUI-Mines
-                                            </div>
-                                            <div class="modal-body" style="font-size: 0.85rem;">
-                                                TUI-Mines is the winning project of a Coding Jam hosted<br>
-                                                at <a href="https://discord.com/invite/X3NmMgzFKF" target="_blank">Java
-                                                    Community
-                                                    Discord</a>.<br>
-                                                <br>
-                                                The exact announcement message with winners can be found<br>
-                                                here: <a
-                                                    href="https://discord.com/channels/648956210850299986/653619894772039680/1169643030475714670"
-                                                    class="discordLink" target="_blank"><svg role="img"
-                                                        xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                        fill="none" viewBox="0 0 24 24">
-                                                        <path fill="currentColor" fill-rule="evenodd"
-                                                            d="M10.99 3.16A1 1 0 1 0 9 2.84L8.15 8H4a1 1 0 0 0 0 2h3.82l-.67 4H3a1 1 0 1 0 0 2h3.82l-.8 4.84a1 1 0 0 0 1.97.32L8.85 16h4.97l-.8 4.84a1 1 0 0 0 1.97.32l.86-5.16H20a1 1 0 1 0 0-2h-3.82l.67-4H21a1 1 0 1 0 0-2h-3.82l.8-4.84a1 1 0 1 0-1.97-.32L15.15 8h-4.97l.8-4.84ZM14.15 14l.67-4H9.85l-.67 4h4.97Z"
-                                                            clip-rule="evenodd" class=""></path>
-                                                    </svg>announcements
-                                                </a>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <a class="button github" data-bs-dismiss="modal"><i
-                                                        class="fa fa-close"></i>Close</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                                 <p>
                                     An <a href="#" onclick="event.preventDefault();" data-bs-toggle="modal"
                                         data-bs-target="#minesModal">award-winning</a> clone of the
                                     popular Minesweeper clone<br>
                                     playable straight in your terminal!<br>
-                                    <span class="hidden" style="display: none">You can even play it here!<br>Just click
-                                        the [ Play ] button below</span>
                                 </p><br>
                             </div>
-                            <a class="button hidden" style="display: none;" console-exit="11" target="_blank">Play</a>
                             <a class="button github" style="font-size: 1em;"
                                 href="https://github.com/Defective4/TUI-Mines" target="_blank"><i
                                     class="fa fa-external-link"></i>Check
                                 it out on GitHub</a>
-                            <a class="button github" style="font-size: 1em;" data-bs-toggle="modal"
-                                data-bs-target="#minesSSHModal"><i class="fa fa-play"></i>Play over SSH</a>
                             <a class="button discord-filled" style="font-size: 1em;"
                                 href="https://discord.com/invite/X3NmMgzFKF" target="_blank"><i
                                     class="fab fa-discord"></i>Java
@@ -198,32 +425,6 @@
                             </div>
                             <h5 class="carousel-title">Site over SSH</h5>
                             <div class="d-none d-md-block console-c-content">
-                                <div class="modal fade" id="sshModal" tabindex="-1" style="font-weight: 400;">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content bg-dark">
-                                            <div class="modal-header" style="font-size: 0.95rem; font-weight: bold;">
-                                                SSH login credentials
-                                            </div>
-                                            <div class="modal-body" style="font-size: 0.85rem;">
-                                                <p style="text-align: left;">
-                                                    Use these credentials in your favourite SSH client:<br>
-                                                    (Tested with <a href="https://www.putty.org/"
-                                                        target="_blank">PuTTY</a>)
-                                                <div class="code" style="text-align: left;">
-                                                    Server: 65.21.130.122<br>
-                                                    Port: 11227<br>
-                                                    User: visitor<br>
-                                                    Password is empty
-                                                </div>
-                                                </p>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <a class="button github" data-bs-dismiss="modal"><i
-                                                        class="fa fa-close"></i>Close</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                                 <p>
                                     A version of <strong>this</strong> site available over SSH!<br>
                                     Go ahead, try it out!
@@ -255,6 +456,53 @@
                                 <a class="button github" style="font-size: 1em;"
                                     href="https://github.com/Defective4/StarBox-Engine" target="_blank"><i
                                         class="fa fa-external-link"></i>Check it out on GitHub</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="img/guns.png" class="d-block w-100 cImage" alt="...">
+                        <div class="carousel-caption carousel-text">
+                            <div class="labels d-none d-md-block">
+                                <span class="label label-red"><i class="fa fa-ban"></i>Closed source</span>
+                                <span class="label label-shine"><i class="fa fa-wand-magic-sparkles"></i>Closed
+                                    beta</span>
+                                <span class="label label-green"><i class="fa fa-plug"></i>Minecraft Plugin</span>
+                            </div>
+                            <h5 class="carousel-title">Guns</h5>
+                            <div class="d-none d-md-block console-c-content">
+                                <p>
+                                    A FPS (First Person Shooter) inspired by Counter-Strike: Global Offensive. <br>
+                                    It has custom weapons, leaderboards, duels and <strong>custom bots</strong>!
+                                </p><br>
+
+                                <a class="button github disabled" style="font-size: 1em;"><i
+                                        class="fa fa-info-circle"></i>Learn more</a>
+                                <a class="button about disabled" style="font-size: 1em;"><i
+                                        class="fa fa-envelope"></i>Apply for Beta</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="img/paint.png" class="d-block w-100 cImage" alt="...">
+                        <div class="carousel-caption carousel-text">
+                            <div class="labels d-none d-md-block">
+                                <span class="label label-red"><i class="fa fa-ban"></i>Closed source</span>
+                                <span class="label label-shine"><i class="fa fa-wand-magic-sparkles"></i>Closed
+                                    beta</span>
+                                <span class="label label-green"><i class="fa fa-plug"></i>Minecraft Plugin</span>
+                            </div>
+                            <h5 class="carousel-title">Paint</h5>
+                            <div class="d-none d-md-block console-c-content">
+                                <p>
+                                    Paint outstanding paintings without leaving the game!<br>
+                                    This game mode allows you to create paintings using a brush, <br>
+                                    and after you are done you can share them using a generated link!
+                                </p><br>
+
+                                <a class="button github disabled" style="font-size: 1em;"><i
+                                        class="fa fa-info-circle"></i>Learn more</a>
+                                <a class="button about disabled" style="font-size: 1em;"><i
+                                        class="fa fa-envelope"></i>Apply for Beta</a>
                             </div>
                         </div>
                     </div>
@@ -307,7 +555,7 @@
                             <div class="labels d-none d-md-block">
                                 <span class="label label-green"><i class="fab fa-git-alt"></i>Open-Source</span>
                                 <span class="label label-blue">Client</span>
-                                <span class="label label-red"><i class="fa fa-x"></i>On hiatus</span>
+                                <span class="label label-red"><i class="fa fa-x"></i>Abandoned</span>
 
                             </div>
                             <h5 class="carousel-title">Another Minecraft Chat Client</h5>
@@ -365,12 +613,20 @@
             Contributions list:<br>
             <ul style="margin: 0px;" id="console-contributions">
                 <li><a href="https://github.com/Java-Discord/JavaBot" target="_blank">JavaBot</a> - an utility bot for
-                    <a href="https://discordjug.net/" target="_blank">Java Community Discord</a>
+                    <a href="https://discordjug.net/" target="_blank">Java Community Discord</a>.
                 </li>
-                <li>Craft Legends - An early Work In Progress Minecraft next generation server</li>
                 <li><a href="https://github.com/ExcessiveAmountsOfZombies/Croptopia" target="_blank">Croptopia</a> - a
                     Minecraft mod that adds crops and food to the game.</li>
-                <li>Platania - A 1.8 PvP server</li>
+                <li>Platania - A 1.8 PvP server.</li>
+                <li>Craft Legends - An early Work In Progress Minecraft next generation server.</li>
+                <li><a href="https://github.com/Defective4/AuthMeProxy" target="_blank">AuthMeProxy</a> - A fork of <a
+                        href="https://github.com/AuthMe/AuthMeBungee" target="_blank">AuthMeBungee</a> bringing support
+                    for Velocity proxy software.</li>
+                <li><a href="https://github.com/Defective4/ComcraftServer-Android"
+                        target="_blank">ComcraftServer-Android</a> - An Android port of the original <a
+                        href="https://github.com/simon816/ComcraftServer" target="_blank">ComcraftServer</a></li>
+                <li><a href="https://github.com/Arrin-KN1E/SDR-Band-Plans" target="_blank">SDR-Band-Plans</a> -
+                    Open-source Band Plans for SDR Software.</li>
             </ul>
         </div>
         </p>
@@ -385,14 +641,74 @@
                 <span class="console-contact" type="Discord"><i class="fab fa-discord" style="color: #5662F6"></i><span
                         class="code">java.net.defective</span>
                     <a copy="java.net.defective" class="copy-btn"></a>-
-                    Currently <span style="color: lime;">Online</span></span><br><br>
+                    Currently <span id="discordOnline">...</span></span> <span id="discordPlaying"></span><br><br>
+                    <span class="console-contact" type="Discord Server"><i class="fab fa-discord" style="color: #5662F6"></i>
+                        <a href="https://discord.gg/sP98bwTESz" target="_blank">My Discord community</a><br><br>
                 <span class="console-contact" type="Website"><i class="fa fa-globe"></i> <span style="color: gray;">Work
                         in progress</span></span><br><br>
                 <span class="console-contact" type="GitHub"><i class="fab fa-github"></i> <a
                         href="https://github.com/Defective4">@Defective4</a></span><br><br>
+                <span class="console-contact" type="Blog"><i class="fa fa-blog"></i> <a href="blog">My
+                        blog<span class="hidden" style="display:none;"> -
+                            https://defective4.github.io/blog</span></a></span><br><br>
+                <span class="console-contact" type="YouTube"><i class="fab fa-youtube"></i> <a href="https://www.youtube.com/channel/UCyHMYO-OCoxJXLJgN2F6jwA">YouTube channel<span class="hidden" style="display:none;"> -
+                            https://www.youtube.com/channel/UCyHMYO-OCoxJXLJgN2F6jwA</span></a></span><br><br>
                 <span class="console-contact" type="Mail"><i class="fa fa-envelope-open-text"></i> <a
                         href="mailto:def3ctive4@gmail.com">def3ctive4@gmail.com</a> <a copy="def3ctive4@gmail.com"
                         class="copy-btn"></a></span>
+
+                <script>
+                    const discordOnline = document.getElementById("discordOnline");
+                    const xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                            const content = xhr.responseText;
+                            const json = JSON.parse(content);
+                            let color;
+                            let inner;
+
+                            switch (json["status"]) {
+                                case "online": {
+                                    color = "lime";
+                                    inner = "Online!";
+                                    break;
+                                }
+                                case "idle": {
+                                    color = "yellow";
+                                    inner = "Idle";
+                                    break;
+                                }
+                                case "dnd": {
+                                    color = "red";
+                                    inner = "Do not disturb";
+                                    break;
+                                }
+                                default: {
+                                    color = "gray";
+                                    inner = "Offline";
+                                    break;
+                                }
+                            }
+
+                            const playing = json["playing"];
+                            const discordPlaying = document.getElementById("discordPlaying");
+
+                            if (playing !== undefined) {
+                                discordPlaying.innerHTML = " (playing <strong>" + playing + "</strong>)";
+                            } else {
+                                const client = json["clients"];
+                                if (client !== undefined && client == "phone") {
+                                    discordPlaying.innerHTML = " (on my phone)";
+                                }
+                            }
+
+                            discordOnline.style.color = color;
+                            discordOnline.innerHTML = inner;
+                        }
+                    }
+                    xhr.open("GET", "https://racuszki.pl/racuszek/online");
+                    xhr.send();
+                </script>
             </div>
             <br><br>
             <script>
@@ -400,7 +716,6 @@
             </script>
         </div>
     </div>
-
 </body>
 
 </html>

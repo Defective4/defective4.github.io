@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv='content-language' content='en-us'>
+    <meta name="author" content="Defective4" />
+    <meta name="twitter:title" content="%1$s" />
+    <meta name="description" content="%2$s" />
+    <meta name="twitter:description" content="%2$s" />
+    <meta name="keywords" content="%3$s" />
+    <meta name="theme-color" content="%4$s" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+    <title>%1$s</title>
+    <script src="/js/bootstrap.bundle.js"></script>
+    <script src="/js/defective.js?rev=20240827"></script>
+    <script src="/js/moment.min.js"></script>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/all.min.css">
+    <link rel="stylesheet" href="/css/defective.css?rev=20240827">
+    <link rel="stylesheet" href="/css/labels.css?rev=20240827">
+    <link rel="stylesheet" href="/css/code.css">
+    <link rel="shortcut icon" href="/img/Defective.png" type="image/png">
+</head>
+
+<body>
+    <div class="container">
+        <button href="/blog" class="card-link" style="margin-top: 32px;"><i style="margin:0px;"
+                class="fa fa-arrow-left"></i> Go
+            back</button>
+        <h1 style="margin: 0px;">%1$s</h1>
+        <span id="post-time"><i class="fa fa-clock"></i></span><br>
+
+        <div class="post-container">
+%6$s
+        </div>
+    </div>
+    <script src="/js/ripple.js"></script>
+    <script>
+        const time = "%5$s";
+        const postTime = document.getElementById("post-time");
+        postTime.innerHTML = postTime.innerHTML + moment.unix(time).format("ddd, Do MMM YYYY [at] HH:mm");
+    </script>
+</body>
+
+</html>
