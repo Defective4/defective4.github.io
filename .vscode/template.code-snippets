@@ -1,0 +1,40 @@
+{
+	// Place your Portfolio workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Placeholders with the same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"scope": "javascript,typescript",
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+	"Project": {
+		"prefix": "project",
+		"body": [
+			"<div class=\"carousel-item\">", 
+			"		<img src=\"img/$2\" class=\"d-block w-100 cImage\" alt=\"...\">", 
+			"		<div class=\"carousel-caption carousel-text\">", 
+			"			<div class=\"labels d-none d-md-block\">", 
+			"			</div>", 
+			"			<h5 class=\"carousel-title\">$1</h5>", 
+			"			<div class=\"d-none d-md-block console-c-content\">",
+			"				<p>", 
+			"",
+			"				</p><br>", 
+			"", 
+			"				<a class=\"button github\" style=\"font-size: 1em;\"", 
+			"					href=\"$3\" target=\"_blank\"><i", 
+			"						class=\"fa fa-external-link\"></i>Check it out on GitHub</a>", 
+			"			</div>", 
+			"		</div>", 
+			"	</div>"
+		]
+	}
+}

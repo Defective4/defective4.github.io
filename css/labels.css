@@ -1,0 +1,30 @@
+.label {
+    padding: 2px 5px;
+    border-radius: 5px;
+}
+
+.labels {
+    cursor: default;
+    user-select: none;
+    pointer-events: none;
+}
+
+.label.label-green {
+    background: rgb(25, 172, 25);
+}
+
+.label.label-blue {
+    background: rgb(94, 94, 255);
+}
+
+.label.label-shine {
+    background: linear-gradient(to right, #a070a7, #5555ff);
+}
+
+.label.label-red {
+    background: rgb(202, 35, 35);
+}
+
+.label.label-gold {
+    background: rgb(175, 152, 19);
+}
