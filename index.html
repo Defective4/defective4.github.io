@@ -433,7 +433,7 @@
                 <span class="console-contact" type="Discord"><i class="fab fa-discord" style="color: #5662F6"></i><span
                         class="code">java.net.defective</span>
                     <a copy="java.net.defective" class="copy-btn"></a>-
-                    Currently <span id="discordOnline"></span></span><br><br>
+                    Currently <span id="discordOnline">...</span></span><br><br>
                 <span class="console-contact" type="Website"><i class="fa fa-globe"></i> <span style="color: gray;">Work
                         in progress</span></span><br><br>
                 <span class="console-contact" type="GitHub"><i class="fab fa-github"></i> <a
@@ -443,7 +443,43 @@
                         class="copy-btn"></a></span>
 
                 <script>
+                    const discordOnline = document.getElementById("discordOnline");
+                    const xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
+                            const content = xhr.responseText;
+                            const json = JSON.parse(content);
+                            let color;
+                            let inner;
+                            switch (json["status"]) {
+                                case "online": {
+                                    color = "lime";
+                                    inner = "Online!";
+                                    break;
+                                }
+                                case "idle": {
+                                    color = "yellow";
+                                    inner = "Idle";
+                                    break;
+                                }
+                                case "dnd": {
+                                    color = "red";
+                                    inner = "Do not disturb";
+                                    break;
+                                }
+                                default: {
+                                    color = "gray";
+                                    inner = "Offline";
+                                    break;
+                                }
+                            }
 
+                            discordOnline.style.color = color;
+                            discordOnline.innerHTML = inner;
+                        }
+                    }
+                    xhr.open("GET", "https://racuszki.pl/racuszek/online");
+                    xhr.send();
                 </script>
             </div>
             <br><br>
