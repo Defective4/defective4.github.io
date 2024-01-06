@@ -62,6 +62,13 @@ table a {
     transition: 0.25s;
 }
 
+
+.disabled {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+    transform: scale(1) !important;
+}
+
 .cImage:hover {
     opacity: 0.5;
 }
@@ -111,6 +118,7 @@ table a {
     margin-bottom: 5px;
     display: inline-flex;
     width: fit-content;
+    user-select: none;
 }
 
 .button.contact {
