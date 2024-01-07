@@ -433,7 +433,7 @@
                 <span class="console-contact" type="Discord"><i class="fab fa-discord" style="color: #5662F6"></i><span
                         class="code">java.net.defective</span>
                     <a copy="java.net.defective" class="copy-btn"></a>-
-                    Currently <span id="discordOnline">...</span></span><br><br>
+                    Currently <span id="discordOnline">...</span></span> <span id="discordPlaying"></span><br><br>
                 <span class="console-contact" type="Website"><i class="fa fa-globe"></i> <span style="color: gray;">Work
                         in progress</span></span><br><br>
                 <span class="console-contact" type="GitHub"><i class="fab fa-github"></i> <a
@@ -451,6 +451,7 @@
                             const json = JSON.parse(content);
                             let color;
                             let inner;
+
                             switch (json["status"]) {
                                 case "online": {
                                     color = "lime";
@@ -471,6 +472,18 @@
                                     color = "gray";
                                     inner = "Offline";
                                     break;
+                                }
+                            }
+
+                            const playing = json["playing"];
+                            const discordPlaying = document.getElementById("discordPlaying");
+
+                            if (playing !== undefined) {
+                                discordPlaying.innerHTML = " (currently in <strong>" + playing + "</strong>)";
+                            } else {
+                                const client = json["clients"];
+                                if (client !== undefined && client == "phone") {
+                                    discordPlaying.innerHTML = " (on my phone)";
                                 }
                             }
 
