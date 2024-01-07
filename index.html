@@ -479,7 +479,7 @@
                             const discordPlaying = document.getElementById("discordPlaying");
 
                             if (playing !== undefined) {
-                                discordPlaying.innerHTML = " (currently in <strong>" + playing + "</strong>)";
+                                discordPlaying.innerHTML = " (playing <strong>" + playing + "</strong>)";
                             } else {
                                 const client = json["clients"];
                                 if (client !== undefined && client == "phone") {
