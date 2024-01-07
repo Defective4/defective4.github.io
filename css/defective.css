@@ -52,7 +52,7 @@ table a {
 }
 
 .carousel-text {
-    font-size: 0.75em;
+    font-size: 0.8em;
     background: rgba(0, 0, 0, 0.75);
     border-radius: 15px;
 }
@@ -109,7 +109,6 @@ table a {
 .button {
     padding: 7px;
     font-size: 0.9em;
-    font-weight: bold;
     cursor: pointer;
     transition: 0.1s;
     text-decoration: none;

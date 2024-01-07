@@ -3,6 +3,10 @@
     border-radius: 5px;
 }
 
+.label i {
+    font-size: 0.75rem !important;
+}
+
 .labels {
     cursor: default;
     user-select: none;
