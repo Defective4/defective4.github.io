@@ -1,3 +1,83 @@
+.card {
+    background-color: rgba(255, 255, 255, 0);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.75rem;
+}
+
+.card-link {
+    color: #c58cce !important;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+    border-radius: 5px;
+    padding: 3px 5px;
+    margin-left: -5px;
+    transition: background-color .1s ease-in-out;
+    user-select: none;
+    position: relative;
+    overflow: hidden !important;
+    background: #00000000;
+    border: none;
+}
+
+.card-link:before {
+    content: "";
+    position: absolute;
+    background: rgba(255, 255, 255, 0.3);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0;
+    border-radius: 100%;
+}
+
+.card-link.ripple:before {
+    animation: ripple 1s forwards;
+}
+
+@keyframes ripple {
+    0% {
+        width: 0%;
+        padding-top: 0%;
+        opacity: 1;
+    }
+
+    40% {
+        width: 120%;
+        padding-top: 120%;
+        opacity: 1;
+    }
+
+    100% {
+        width: 120%;
+        padding-top: 120%;
+        opacity: 0;
+    }
+}
+
+.card-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.card-body h5 {
+    margin: 0px;
+}
+
+.card-time {
+    margin-top: 0px;
+    opacity: 0.5;
+    user-select: none;
+}
+
+.cards {
+    margin-top: 16px;
+}
+
+.cards .card {
+    margin-bottom: 16px;
+}
+
 .star {
     position: absolute;
     background-image: url(../img/star.png);
@@ -17,7 +97,8 @@
         transform: rotate(360deg) scale(100%);
     }
 
-    80%, 100% {
+    80%,
+    100% {
         transform: rotate(720deg) scale(0%);
     }
 }

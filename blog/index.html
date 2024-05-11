@@ -15,8 +15,9 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta charset="UTF-8" />
-    <script src="js/bootstrap.bundle.js"></script>
-    <script src="js/defective.js"></script>
+    <script src="/js/bootstrap.bundle.js"></script>
+    <script src="/js/defective.js"></script>
+    <script src="/js/moment.min.js"></script>
     <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="/css/all.min.css">
     <link rel="stylesheet" href="/css/defective.css?rev=20240511">
@@ -24,7 +25,19 @@
 </head>
 
 <body>
-    Work in progress
+    <div class="container">
+        <a href="/" class="button github" style="margin-top: 32px; font-size: 0.75rem;"><i class="fa fa-home"></i> Main
+            page</a>
+        <h1 style="margin: 0px;">Defective's Blog</h1>
+        Random stuff in one place
+
+        <h2 style="margin-bottom: 0px;">Recent posts</h2>
+        <div class="cards" id="cards">
+        </div>
+        <script src="/blog/js/loader.js"></script>
+    </div>
+
+    <script src="/js/ripple.js"></script>
 </body>
 
 </html>
