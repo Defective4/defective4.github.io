@@ -1,3 +1,31 @@
+.star {
+    position: absolute;
+    background-image: url(../img/star.png);
+    background-size: contain;
+    width: 16px;
+    height: 16px;
+    animation: shine 2s infinite linear;
+    pointer-events: none;
+}
+
+@keyframes shine {
+    0% {
+        transform: rotate(0deg) scale(0%);
+    }
+
+    40% {
+        transform: rotate(360deg) scale(100%);
+    }
+
+    80%, 100% {
+        transform: rotate(720deg) scale(0%);
+    }
+}
+
+.shiny {
+    position: relative;
+}
+
 .fa,
 .fab {
     margin-right: 10px;
@@ -128,6 +156,11 @@ table a {
 .button.contact:hover {
     background: rgb(136, 185, 241);
     color: black;
+}
+
+.button.golden {
+    border: 1px solid gold;
+    color: gold;
 }
 
 .button.github {
