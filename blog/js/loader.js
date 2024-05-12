@@ -1,5 +1,6 @@
 const container = document.getElementById("cards");
 const xhr = new XMLHttpRequest();
+xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
 xhr.onreadystatechange = () => {
     if (xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200) {
         const posts = JSON.parse(xhr.responseText)["posts"];
