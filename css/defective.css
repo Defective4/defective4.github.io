@@ -56,7 +56,7 @@
     }
 }
 
-.card-link:hover {
+.card-link:hover, .card-link:focus {
     background: rgba(255, 255, 255, 0.1);
 }
 
@@ -68,6 +68,9 @@
     margin-top: 0px;
     opacity: 0.5;
     user-select: none;
+    width: fit-content;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .cards {

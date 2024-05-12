@@ -9,7 +9,8 @@ xhr.onreadystatechange = () => {
             const time = post["time"];
             const desc = post["desc"];
             const link = post["link"];
-            const intval = moment.unix(time).fromNow();
+            const mmt = moment.unix(time);
+            const intval = mmt.fromNow();
 
             const card = document.createElement("div");
             const cardBody = document.createElement("div");
@@ -22,6 +23,9 @@ xhr.onreadystatechange = () => {
 
             cardTitle.innerHTML = title;
             cardTime.innerHTML = intval;
+            cardTime.title = mmt.format("ddd, Do MMM YYYY [at] HH:mm");
+            cardTime.setAttribute("data-bs-toggle", "tooltip");
+            cardTime.setAttribute("data-bs-placement", "right");
             cardText.innerHTML = desc.join("<br>");
             cardLink.innerHTML = `Read more <i class="fa fa-arrow-right"
             style="margin: 0px;"></i>`;
@@ -46,6 +50,10 @@ xhr.onreadystatechange = () => {
 
             attach(cardLink);
         }
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
     }
 };
 xhr.open("GET", "/blog/index.json");
