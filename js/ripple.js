@@ -5,7 +5,8 @@ for (let index = 0; index < buttons.length; index++) {
 }
 
 function attach(button) {
-    button.onmousedown = () => {
+    button.onmousedown = (e) => {
+        if(e.button != 0) return;
         button.classList.remove("ripple");
         setTimeout(() => {
             button.classList.add("ripple");

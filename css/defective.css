@@ -1,3 +1,35 @@
+#post-time {
+    opacity: 0.5;
+    font-size: 0.8rem;
+}
+
+.post-container {
+    margin-top: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.171);
+    border-radius: 15px;
+    padding: 30px;
+    text-align: justify;
+    font-size: 0.9rem;
+}
+
+.post-container code {
+    background-color: rgba(0, 0, 0, 0.7);
+    display: inline-block;
+    border-radius: 5px;
+    padding: 2px 5px;
+}
+
+.post-container pre code {
+    padding: 0px 30px;
+}
+
+.post-container h1,
+.post-container h2,
+.post-container h3 {
+    color: white !important;
+    margin: 30px 0px 5px 0px;
+}
+
 .card {
     background-color: rgba(255, 255, 255, 0);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -56,7 +88,8 @@
     }
 }
 
-.card-link:hover, .card-link:focus {
+.card-link:hover,
+.card-link:focus {
     background: rgba(255, 255, 255, 0.1);
 }
 
