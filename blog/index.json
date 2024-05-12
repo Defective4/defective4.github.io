@@ -6,7 +6,7 @@
             "desc": [
                 "consectetur adipiscing elit. Quisque volutpat varius massa at posuere. Curabitur ac arcu a arcu blandit viverra. Nulla porttitor pharetra dui sit amet elementum. Cras at sapien sed elit cursus viverra nec eu mauris. Donec porttitor vel nisi quis pharetra. Proin sit amet enim id massa sagittis consequat. Vestibulum vehicula venenatis ante, nec tincidunt velit placerat in. Sed volutpat eros vel lacus rhoncus, quis eleifend orci tristique."
             ],
-            "link": "blog/posts/test"
+            "link": "/blog/posts/test"
         }
     ]
 }
