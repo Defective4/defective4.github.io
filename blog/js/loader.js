@@ -9,6 +9,7 @@ xhr.onreadystatechange = () => {
             const cardBody = document.createElement("div");
             const cardTitle = document.createElement("h5");
             const cardText = document.createElement("p");
+            const cardLink = document.createElement("button");
 
             cardBody.classList.add("card-body");
 
@@ -18,15 +19,24 @@ xhr.onreadystatechange = () => {
             cardTitle.classList.add("card-title");
             cardText.classList.add("card-text");
 
+            cardLink.innerHTML = `<i class="fa fa-envelope"></i>Subscribe to Newsletter`;
+
+            cardLink.classList.add("card-link");
+            cardLink.onclick = () => {
+                new bootstrap.Modal(document.getElementById('newsletterModal')).show();
+            }
+
 
             cardBody.appendChild(cardTitle);
             cardBody.appendChild(cardText);
-
+            cardBody.appendChild(cardLink);
 
             card.classList.add("card");
             card.style.maxWidth = "50%";
             card.appendChild(cardBody);
             container.appendChild(card);
+
+            attach(cardLink);
         } else {
             for (let index = 0; index < posts.length; index++) {
                 const post = posts[index];

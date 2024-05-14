@@ -25,9 +25,58 @@
 </head>
 
 <body>
+    <!-- MODALS -->
+
+    <div class="modal fade" id="newsletterModal" tabindex="-1" style="font-weight: 400;" data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark">
+                <div class="modal-header" style="font-size: 0.95rem; font-weight: bold;">
+                    Where would you like to receive notifications?
+                </div>
+                <div class="modal-body" style="font-size: 0.85rem;text-align: left;">
+                    <div class="accordion accordion-flush" id="newsletterAccordion">
+                        <div class="accordion-item bg-dark">
+                            <h2 class="accordion-header card-link">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseOne"><i class="fab fa-discord"></i> Discord
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+                                data-bs-parent="#newsletterAccordion">
+                                <div class="accordion-body">
+                                    1
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item bg-dark">
+                            <h2 class="accordion-header card-link">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseTwo">
+                                    <i class="fa fa-envelope"></i>E-Mail
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                                data-bs-parent="#newsletterAccordion">
+                                <div class="accordion-body">
+                                    2
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a class="button github" data-bs-dismiss="modal"><i class="fa fa-close"></i>Close</a>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="container">
         <a href="/" class="button github" style="margin-top: 32px; font-size: 0.75rem;"><i class="fa fa-home"></i> Main
-            page</a>
+            page</a><br>
+        <button data-bs-toggle="modal" data-bs-target="#newsletterModal" class="card-link"
+            style="margin-bottom: 24px; margin-left: 0px;"><i class="fa fa-envelope"></i>Subscribe
+            to
+            Newsletter</button>
         <h1 style="margin: 0px;">Defective's Blog</h1>
         Random stuff in one place
 
