@@ -3,6 +3,31 @@
     font-size: 0.8rem;
 }
 
+.fa-star {
+    color: gold;
+}
+
+.fa-star-half-stroke {
+    color: gold;
+}
+
+.fa-regular.fa-star {
+    color: gray;
+}
+
+table.noborder {
+    outline: none !important;
+    border: none !important;
+}
+
+table.noborder td,
+tr,
+th,
+thead {
+    outline: none !important;
+    border: none !important;
+}
+
 .accordion-button {
     background-color: #00000000 !important;
     color: white !important;
