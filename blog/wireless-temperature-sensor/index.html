@@ -1,0 +1,203 @@
+<!doctype html>
+<html>
+ <head>
+  <meta http-equiv="content-language" content="en-us">
+  <meta name="author" content="Defective4">
+  <meta name="twitter:title" content="Making a wireless temperature sensor with Raspberry Pi">
+  <meta name="description" content="Have you ever wanted to make your **own** weather station? | One that will work independently, without the need for any other devices? | It turns out you can easily assemble your own weather station, with Raspberry Pi's ability to read various sensors and... to transmit RF signals!">
+  <meta name="twitter:description" content="Have you ever wanted to make your **own** weather station? | One that will work independently, without the need for any other devices? | It turns out you can easily assemble your own weather station, with Raspberry Pi's ability to read various sensors and... to transmit RF signals!">
+  <meta name="keywords" content="sdr,rpitx,pocsag,raspberry,ds18b20,temperature,sensor">
+  <meta name="theme-color" content="#a070a7">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <title>Making a wireless temperature sensor with Raspberry Pi</title>
+  <script src="/js/bootstrap.bundle.js"></script>
+  <script src="/js/defective.js?rev=20240827"></script>
+  <script src="/js/moment.min.js"></script>
+  <link rel="stylesheet" href="/css/bootstrap.css">
+  <link rel="stylesheet" href="/css/all.min.css">
+  <link rel="stylesheet" href="/css/defective.css?rev=20240827">
+  <link rel="stylesheet" href="/css/labels.css?rev=20240827">
+  <link rel="stylesheet" href="/css/code.css">
+  <link rel="shortcut icon" href="/img/Defective.png" type="image/png">
+ </head>
+ <body>
+  <div class="container">
+   <button href="/blog" class="card-link" style="margin-top: 32px;"><i style="margin:0px;" class="fa fa-arrow-left"></i> Go back</button>
+   <h1 style="margin: 0px;">Making a wireless temperature sensor with Raspberry Pi</h1><span id="post-time"><i class="fa fa-clock"></i></span>
+   <br>
+   <div class="post-container">
+    <p><img src="img/thumbnail.jpg" alt="thumbnail"><br><em>[Source]: <a href="botland.com.pl">botland.com.pl</a></em></p>
+    <p>Have you ever wanted to make your <strong>own</strong> weather station?<br>
+      One that will work independently, without the need for any other devices?<br>
+      It turns out you can easily assemble your own weather station, with Raspberry Pi's ability to read various sensors and... to transmit RF signals!<br>
+      Today we will create our very own (and super simple!) temperature sensor, that will transmit its data straight to your computer. No Wi-Fi or mobile data needed!</p>
+    <h1 id="about-the-ds18b20-temperature-sensor">About the DS18B20 temperature sensor</h1>
+    <p><strong>DS18B20</strong> is a popular and very easy to use digital temperature sensor.<br>
+      It operates using <a href="https://en.wikipedia.org/wiki/1-Wire">1-Wire</a> interface. It's also very small, can operate in extremely low (-55°C) and high (125°C) temperatures, and is quite accurate.<br>
+      The sensor deceptively resembles a generic transistor, therefore it can be hard to get a genuine component.<br>
+      I've had luck buying it from a local reseller, and I would definitely advise against buying from places like Aliexpress or eBay.</p>
+    <p>As I mentioned before, <strong>DS18B20</strong> uses <strong>1-Wire</strong> interface, meaning it needs only one wire to transfer data. Neat!</p>
+    <h1 id="before-we-start">Before we start...</h1>
+    <p>Make sure you have the following:</p>
+    <ul class="incremental">
+     <li><input type="checkbox"> a genuine DS18B20</li>
+     <li><input type="checkbox"> Raspberry Pi with <a href="https://github.com/F5OEO/rpitx">rpitx</a> installed</li>
+     <li><input type="checkbox"> a SDR receiver that you can plug into your computer (a cheap <a href="https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/">RTL-SDR</a> dongle is more than enough)</li>
+     <li><input type="checkbox"> A RF low pass filter (optional)</li>
+    </ul>
+    <p>I won't cover how to install rpitx on your RPi, but it's well explained in its <a href="https://github.com/F5OEO/rpitx">GitHub repository</a></p>
+    <h1 id="about-rpitx">About <a href="https://github.com/F5OEO/rpitx">rpitx</a></h1>
+    <p><strong>rpitx</strong> is an interesting piece of software, allowing you to <strong>transmit</strong> RF signals using your Raspberry Pi without <strong>any</strong> additional hardware!</p>
+    <blockquote>
+     <p>⚠ <strong>Caution</strong> ⚠<br>
+       You can use rpitx <strong>without</strong> an antenna for short range operation, but if you are going to use one, then <strong>do not</strong> transmit without at least a low pass filter!<br>
+       Unfortunately making a filter is outside of this post's coverage, but they are quite easy to make.<br>
+       Without a filter you are going to transmit a lot of interference on other frequencies, therefore you can get in legal trouble.</p>
+    </blockquote>
+    <p>Installing rpitx is easy, all you need to do is follow <a href="https://github.com/F5OEO/rpitx?tab=readme-ov-file#installation">installation instructions</a> in their repo!<br>
+      Rpitx makes it possible to transmit our data without any external network, straight to our PC!<br>
+      You will still need a SDR receiver though.</p>
+    <h1 id="assembling">Assembling</h1>
+    <p>Assembling the sensor circuit is really easy!<br>
+      All you have to do is connect sensors' pins:</p>
+    <ul class="incremental">
+     <li><code>+</code> to 3.3v power source</li>
+     <li><code>-</code> to GND</li>
+     <li><code>data</code> pin to a GPIO pin (other than GPIO 4 - that pin is used by rpitx as an antenna!)</li>
+    </ul><img src="img/schem1.png" width="512/">
+    <p>As you can see I've also connected an antenna with a low-pass filter circuit.<br>
+      You can skip connecting the antenna and not connect anything to GPIO 4 at all.<br>
+      Keep in mind that even if you don't connect an antenna, you still can't use GPIO 4 to connect your sensors. If you do that, the sensor itself will (kinda) act as an antenna! And if you set up GPIO 4 to use the 1-wire interface, rpitx will not work as expected anyway.</p>
+    <p>Notice the <code>4.7k</code> resistor between the 3.3v and the data pin? It's the 
+     <ins>pull-up</ins> resistor. It's required for DS18B20 to work correctly.</p><img src="img/board1.jpg" width="512">
+    <p><em>A photo of a possible arrangement of components on a breadboard. Antenna not included.</em></p>
+    <blockquote>
+     <p>⚠ <strong>Caution</strong> ⚠<br>
+       Pay extra attention to connect the sensor with the correct polarity, to avoid 
+      <ins>permanent damage</ins>!<br>
+       If you connect it with reversed polarity, the sensor will quickly become extremely hot!</p>
+    </blockquote>
+    <h1 id="configuring-the-1-wire-interface">Configuring the 1-Wire interface</h1>
+    <p>Many of you are probably familiar with the 1-Wire interface used by digital temperature sensors.<br>
+      If so, you have probably already enabled it in your OS's settings.<br>
+      But here we will also need to 
+     <ins>change the pin</ins> used by 1-Wire devices!<br>
+      Why? As mentioned before, GPIO 4 is set up by <strong>rpitx</strong> to act as an antenna.<br>
+      GPIO 4 is also the default pin used by 1-Wire communications, so we <strong>have to</strong> change it to another one. Otherwise our circuit itself will act as a transmitting antenna, and rpitx might not work at all.</p>
+    <h2 id="enabling-1-wire-interface">Enabling 1-Wire interface</h2>
+    <p>Enabling 1-Wire interface in your Raspberry Pi is easy!<br>
+      Just type the following command:</p>
+    <div class="sourceCode" id="cb1">
+     <pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> raspi-config</span></code></pre>
+    </div>
+    <p>then navigate to <code>Interface Options</code> &gt; <code>1-Wire</code> and answer <code>Yes</code>.<br>
+      Next, select <code>Finish</code> and <strong>do not reboot</strong> yet.</p>
+    <h2 id="changing-1-wire-port">Changing 1-Wire port</h2>
+    <p>Now we need to edit <code>/boot/firmware/config.txt</code> (<code>/boot/config.txt</code> on older OS versions) to change the 1-Wire pin.</p>
+    <div class="sourceCode" id="cb2">
+     <pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> nano /boot/firmware/config.txt</span></code></pre>
+    </div>
+    <p>Look for the <code>dtoverlay=w1-gpio</code> option and append <code>,gpiopin=17</code> at the end of the line.<br>
+      It should now look like this:</p>
+    <pre><code>dtoverlay=w1-gpio,gpiopin=17</code></pre>
+    <p>Now reboot.</p>
+    <h1 id="testing-the-sensor">Testing the sensor</h1>
+    <p>Now we need to check if our sensor works.</p>
+    <h2 id="checking-loaded-1-wire-modules">Checking loaded 1-Wire modules</h2>
+    <p>First, let's check if the sensor is recognized by our device by entering the command below:</p>
+    <div class="sourceCode" id="cb4">
+     <pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lsmod</span> <span class="kw">|</span> <span class="fu">grep</span> w1</span></code></pre>
+    </div>
+    <p>The result should be similar to:</p>
+    <pre><code>$ lsmod | grep w1
+w1_therm               24576  0
+w1_gpio                12288  0</code></pre>
+    <p><code>w1_gpio</code> is our 1-wire interface and <code>w1_therm</code> is our sensor.<br>
+      If you see both, then congratulations, you have wired and configured your sensor correctly!</p>
+    <h2 id="checking-if-the-sensor-works">Checking if the sensor works</h2>
+    <p>Your sensor will be accessible through its files located in <code>/sys/bus/w1/devices</code>.<br>
+      First, use command <code>ls /sys/bus/w1/devices</code> to find 1-Wire devices installed in your system.<br>
+      The resout should be similar to:</p>
+    <div class="sourceCode" id="cb6">
+     <pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls /sys/bus/w1/devices</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">28-00000f89b1a7</span>  w1_bus_master1</span></code></pre>
+    </div>
+    <p><code>w1_bus_master</code> is our 1-Wire bus, so <code>28-00000f89b1a7</code> is our temperature sensor!</p>
+    <blockquote>
+     <p><strong>Note</strong><br>
+       Numbers present in device name will vary slightly, because each sensor is assigned an unique id at the time of production!</p>
+    </blockquote>
+    <p>Finally, read the temperature!<br>
+      Do <code>cat /sys/bus/w1/devices/28-00000f89b1a7/temperature</code>. The result should be a number.<br>
+      Divide it by 1000 and voila! You have a temperature in Celsius!</p>
+    <h2 id="reading-the-actual-temperature-using-awk">Reading the actual temperature using <code>awk</code></h2>
+    <p>Instead of doing the math ourselves, we can make <code>awk</code> do it for us.<br>
+      Let's expand our previous command:</p>
+    <div class="sourceCode" id="cb7">
+     <pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> /sys/bus/w1/devices/28-00000f89b1a7/temperature <span class="kw">|</span> <span class="fu">awk</span> <span class="st">"{print </span><span class="dt">\$</span><span class="st">1/1000}"</span></span></code></pre>
+    </div>
+    <p>And here is an example output:</p>
+    <pre><code>$ cat /sys/bus/w1/devices/28-00000f89b1a7/temperature | awk "{print \$1/1000}"
+24.187</code></pre>
+    <p>so, the temparature is 24.187°C!</p>
+    <h1 id="transmitting">Transmitting</h1>
+    <p>Now it's time to transmit our sensor's readings!</p>
+    <p>First, we need to choose the frequency and transmission mode.<br>
+      There are multiple modes built into rpitx to choose from, including, but not limited to RTTY, POCSAG and Morse code and even RDS.<br>
+      Today we will use POCSAG on 434 MHz.<br>
+      You can transmit using:</p>
+    <div class="sourceCode" id="cb9">
+     <pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> 1: <span class="op">&lt;</span>line<span class="op">&gt;</span> <span class="kw">|</span> <span class="fu">sudo</span> pocsag <span class="at">-f</span> <span class="op">&lt;</span>Frequency in Hz<span class="op">&gt;</span></span></code></pre>
+    </div>
+    <p>Now let's combine our commands and transmit the actual temperature!<br>
+      To do so, create the following script:</p>
+    <p><a href="script/transmit.sh"><em>transmit.sh</em></a></p>
+    <div class="sourceCode" id="cb10">
+     <pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/sh</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="va">TEMP</span><span class="op">=</span><span class="va">$(</span><span class="fu">cat</span> /sys/bus/w1/devices/28-00000f89b1a7/temperature <span class="kw">|</span> <span class="fu">awk</span> <span class="st">"{print </span><span class="dt">\$</span><span class="st">1/1000}"</span><span class="va">)</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> 1: Current temperature: <span class="va">$TEMP</span> degrees Celsius <span class="kw">|</span> <span class="fu">sudo</span> pocsag <span class="at">-f</span> 434000000</span></code></pre>
+    </div>
+    <p>Now plug-in your SDR, tune it to 434 MHz and run the script using <code>./transmist.sh</code>.<br>
+      You should now see the transmission on your waterfall!</p><img src="img/sdr.png" width="512/"><br>The frequency might be a bit off, but just readjust and it will be fine! 
+    <h2 id="decoding-the-transmission">Decoding the transmission</h2>
+    <p>There are quite a few POCSAG decoders out there.<br>
+      On Windows you can use MultiPSK, on Linux multimon-ng is a great option.<br>
+      Here we will cover <code>multimon-ng</code> usage on Linux.<br>
+      Keep your SDR receiver open! We will need it for multimon to function.<br>
+      Next, let's start the decorder with</p>
+    <div class="sourceCode" id="cb11">
+     <pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">multimon-ng</span> <span class="at">-a</span> POCSAG1200</span></code></pre>
+    </div>
+    <p>then, if you are using <code>pulseaudio</code> or <code>pipewire</code> as your sound system, use <code>pavucontrol</code> to change <code>multimon-ng</code>'s input to <code>Monitor of &lt;your current output&gt;</code>.<br>
+      After that, fire up the transmission again!</p><img src="img/sdr2.png" width="512/">
+    <h1 id="automatic-transmission">Automatic transmission</h1>
+    <p>Let's modify out script, so the transmission is fully automatic!<br>
+      Let's add a <code>while</code> loop, and make it transmit the message every 1 hour:</p>
+    <p><a href="script/transmit2.sh">transmit2.sh</a></p>
+    <div class="sourceCode" id="cb12">
+     <pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/sh</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="fu">true</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="cf">do</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">TEMP</span><span class="op">=</span><span class="va">$(</span><span class="fu">cat</span> /sys/bus/w1/devices/28-00000f89b1a7/temperature <span class="kw">|</span> <span class="fu">awk</span> <span class="st">"{print </span><span class="dt">\$</span><span class="st">1/1000}"</span><span class="va">)</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> 1: Current temperature: <span class="va">$TEMP</span> degrees Celsius <span class="kw">|</span> <span class="fu">sudo</span> pocsag <span class="at">-f</span> 434000000</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sleep</span> 3600</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code></pre>
+    </div>
+    <p>now to run the script:</p>
+    <div class="sourceCode" id="cb13">
+     <pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> +x ./transmit2.sh</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">screen</span> <span class="at">-S</span> sensor ./transmit2.sh</span></code></pre>
+    </div>
+    <p>...and done!<br>
+      Now we can close the terminal. Our Raspberry will now read and transmit current temperature on 434 MHz with POCSAG!</p>
+   </div>
+  </div>
+  <script src="/js/ripple.js"></script>
+  <script>
+        const time = "1725707544";
+        const postTime = document.getElementById("post-time");
+        postTime.innerHTML = postTime.innerHTML + moment.unix(time).format("ddd, Do MMM YYYY [at] HH:mm");
+    </script>
+ </body>
+</html>

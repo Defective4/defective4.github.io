@@ -1,6 +1,16 @@
 {
   "posts": [
     {
+      "title": "Making a wireless temperature sensor with Raspberry Pi",
+      "time": "1725707544",
+      "desc": [
+        "Have you ever wanted to make your **own** weather station? ",
+        " One that will work independently, without the need for any other devices? ",
+        " It turns out you can easily assemble your own weather station, with Raspberry Pi\u0027s ability to read various sensors and... to transmit RF signals!"
+      ],
+      "link": "/blog/wireless-temperature-sensor"
+    },
+    {
       "title": "Controlling a LED segment display with a Raspberry Pi",
       "time": "1724779635",
       "desc": [
