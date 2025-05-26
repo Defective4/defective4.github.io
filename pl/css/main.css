@@ -17,6 +17,7 @@ a:hover {
 .card {
     background-color: #0E001A;
     padding: 15px;
+    padding-bottom: 20px;
     max-width: 40%;
     border-radius: 10px;
     border: 1px solid #a46bc288;
