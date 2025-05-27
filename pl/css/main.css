@@ -5,6 +5,10 @@ body {
     font-size: 15px;
 }
 
+:root {
+    scroll-behavior: smooth;
+}
+
 a {
     color: #e3afff;
     transition: 0.1s;
