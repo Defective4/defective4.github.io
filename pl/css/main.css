@@ -94,14 +94,22 @@ ul {
     margin-top: 24px;
 }
 
+.btn-github-hollow {
+    border: 2px solid #bebebe !important;
+    color: white !important;
+    background-color: transparent !important;
+}
+
 .btn {
+    display: inline-block;
+    border: 2px solid transparent;
     font-weight: 500;
     user-select: none;
     text-decoration: none;
     padding: 5px 15px;
     border-radius: 5px;
     font-family: sans-serif;
-    border: 2px solid transparent;
+    outline: 2px solid transparent;
     opacity: 0.85;
     transition: opacity 0.2s;
     transition: border-color 0.2s;
@@ -113,12 +121,12 @@ ul {
 
 .btn-github:active,
 .btn-github:focus {
-    border-color: #888888;
+    outline-color: #888888;
 }
 
 .btn-primary:active,
 .btn-primary:focus {
-    border-color: #9157b1;
+    outline-color: #9157b1;
 }
 
 .btn:active {
