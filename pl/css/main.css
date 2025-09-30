@@ -5,6 +5,41 @@ body {
     font-size: 15px;
 }
 
+.card:hover .card-bg {
+    opacity: 0.15;
+    background-size: 110% !important;
+}
+
+.card:hover .card-blur {
+    backdrop-filter: blur(0px);
+}
+
+.card .card-blur {
+    transition: backdrop-filter 0.2s;
+    backdrop-filter: blur(5px);
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 0;
+}
+
+.card-bg {
+    background-size: 100% !important;
+    transition: 0.2s;
+    border-radius: 10px;
+    opacity: 0.1;
+    background-position: center !important;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 0;
+}
+
 :root {
     scroll-behavior: smooth;
 }
@@ -18,11 +53,14 @@ a:hover {
     color: #9055af;
 }
 
+.cards .card {
+    max-width: 40%;
+}
+
 .card {
     background-color: #0E001A;
     padding: 15px;
     padding-bottom: 20px;
-    max-width: 40%;
     border-radius: 10px;
     border: 1px solid #a46bc288;
     position: relative;
@@ -123,13 +161,11 @@ ul {
     opacity: 1;
 }
 
-.btn-github:active,
-.btn-github:focus {
+.btn-github:active {
     outline-color: #888888;
 }
 
-.btn-primary:active,
-.btn-primary:focus {
+.btn-primary:active {
     outline-color: #9157b1;
 }
 
